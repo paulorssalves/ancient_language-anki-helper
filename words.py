@@ -22,6 +22,7 @@ class WordBase:
 
 class Word(WordBase):
     def __init__(self, name):
+        self.name = name
         self.data = fetch_word(name)
         self.definitions = self.get_definitions()
          
@@ -44,13 +45,25 @@ class Word(WordBase):
             print("Definitions not available.")
 
     def get_word_class(self):
-        return self.definitions[0]['partOfSpeech']
+        if self.definitions is not None:
+            return [item['partOfSpeech'] for item in self.definitions] 
+        else:
+            return ""
 
     def get_text(self):
-        return self.definitions[0]['text']
+        if self.definitions is not None:
+            return [item['text'] for item in self.definitions]
+        else:
+            return ""
 
     def get_related_words(self):
-        return self.definitions[0]['relatedWords'] 
+        if self.definitions is not None:
+            return [item['relatedWords'] for item in self.definitions]
+        else: 
+            return ""
 
     def get_examples(self):
-        return self.definitions[0]['examples'] 
+        if self.definitions is not None:
+            return [item['examples'] for item in self.definitions] 
+        else:
+            return ""
