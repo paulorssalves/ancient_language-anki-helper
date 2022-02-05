@@ -12,6 +12,34 @@ class DefinitionsNotAvailable(Exception):
 def fetch_word(word, language="Ancient Greek"):
    return parser.fetch(word, language)
 
+def fetch_group_as_string(group, single_list=False):
+    """
+    Transforma grupo de strings em uma lista em uma só string.
+    Deste modo, o arquivo .csv final não fica cheio
+    de colchetes.
+    """
+
+    strings = ""
+    if single_list==True:
+        for i in range(len(group)): 
+            strings+=group[i]
+            if i < (len(group) - 1): 
+                strings+="\n"
+        return strings
+    else:
+        for i in range(len(group)):
+            for j in range(len(group[i])):
+                strings+=group[i][j]
+                if (j == 0):
+                    strings+="\n\n"
+                else:
+                    strings+="\n"
+            if (i < len(group)-1):
+                strings+="\n"
+
+        return strings
+
+
 class WordBase:
     def extract_item(self, word, selection):
         if word[0] != []:
@@ -33,7 +61,7 @@ class Word(WordBase):
                 raise EtymologyNotAvailable
             return etymology
         except EtymologyNotAvailable:
-            print("Etymology not available.") 
+            print("{}: Etymology not available.".format(self.name)) 
 
     def get_definitions(self):
         try:
@@ -46,24 +74,28 @@ class Word(WordBase):
 
     def get_word_class(self):
         if self.definitions is not None:
-            return [item['partOfSpeech'] for item in self.definitions] 
+            return fetch_group_as_string([item['partOfSpeech'] for item in self.definitions], single_list=True)
         else:
             return ""
 
     def get_text(self):
         if self.definitions is not None:
-            return [item['text'] for item in self.definitions]
+            return fetch_group_as_string([item['text'] for item in self.definitions])
         else:
             return ""
 
     def get_related_words(self):
         if self.definitions is not None:
-            return [item['relatedWords'] for item in self.definitions]
+            try:
+                related_words_dict = [item['relatedWords'] for item in self.definitions]
+                return fetch_group_as_string(related_words_dict[0][0]["words"], single_list=True)
+            except IndexError:
+                return ""
         else: 
             return ""
 
     def get_examples(self):
         if self.definitions is not None:
-            return [item['examples'] for item in self.definitions] 
+            return fetch_group_as_string([item['examples'] for item in self.definitions])
         else:
             return ""

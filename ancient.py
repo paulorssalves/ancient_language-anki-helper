@@ -13,6 +13,7 @@ if __name__ == "__main__":
 
             current = Word(word)
 
+            print(current.name)
             words_data = {
                 "names":current.name,
                 "etymologies":current.get_etymology(),
